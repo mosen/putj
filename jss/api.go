@@ -47,7 +47,7 @@ func (a *Api) NewRequest(method string, relPath string, body io.ReadCloser) (*ht
 	return req, nil
 }
 
-func (a *Api) Enforce(state State) error {
+func (a *Api) Enforce(state map[string]interface{}) error {
 	for name, handlerFunc := range enforceHandlers {
 		fmt.Printf("Executing %s\n", name)
 		if _, err := handlerFunc(a, state); err != nil {
@@ -58,25 +58,25 @@ func (a *Api) Enforce(state State) error {
 	return nil
 }
 
-func (a *Api) Capture() (*State, error) {
-	state := &State{}
+func (a *Api) Capture(state map[string]interface{}) error {
+	fmt.Printf("%d\n", len(captureHandlers))
 
 	for name, handlerFunc := range captureHandlers {
 		fmt.Printf("Executing %s\n", name)
 		if err := handlerFunc(a, state); err != nil {
-			return state, err
+			return err
 		}
 	}
 
-	return state, nil
+	return nil
 }
 
 
-type EnforceHandlerFunc func (api *Api, state State) (map[string]string, error)
-var enforceHandlers map[string]EnforceHandlerFunc = map[string]EnforceHandlerFunc{}
+type EnforceHandlerFunc func (api *Api, state map[string]interface{}) (map[string]string, error)
+var enforceHandlers map[string]EnforceHandlerFunc = make(map[string]EnforceHandlerFunc)
 
-type CaptureHandlerFunc func (api *Api, state *State) error
-var captureHandlers map[string]CaptureHandlerFunc = map[string]CaptureHandlerFunc{}
+type CaptureHandlerFunc func (api *Api, state map[string]interface{}) error
+var captureHandlers map[string]CaptureHandlerFunc = make(map[string]CaptureHandlerFunc)
 
 func RegisterEnforceHandler(name string, handler EnforceHandlerFunc) {
 	fmt.Printf("Registering enforce handler %s.\n", name)

@@ -5,6 +5,15 @@ import (
 	"fmt"
 	"os"
 	"github.com/mosen/putj/jss"
+	_ "github.com/mosen/putj/jss/handlers/accounts"
+	_ "github.com/mosen/putj/jss/handlers/activation"
+	_ "github.com/mosen/putj/jss/handlers/buildings"
+	_ "github.com/mosen/putj/jss/handlers/categories"
+	_ "github.com/mosen/putj/jss/handlers/computercheckin"
+	_ "github.com/mosen/putj/jss/handlers/departments"
+	_ "github.com/mosen/putj/jss/handlers/netbootservers"
+	_ "github.com/mosen/putj/jss/handlers/smtpserver"
+	"encoding/json"
 )
 
 func main() {
@@ -27,21 +36,35 @@ func main() {
 
 	switch os.Args[1] {
 	case "capture":
-		if err := flSetCapture.Parse(os.Args[2:]); err != nil {
-			fmt.Println("Capture")
+		fmt.Println("Capture")
 
-			api, err := jss.NewApi(*flUrl, *flUsername, *flPassword)
-			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			}
-
-			api.Capture()
-
+		api, err := jss.NewApi(*flUrl, *flUsername, *flPassword)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
 		}
+
+		var state = make(map[string]interface{})
+		if err := api.Capture(state); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		stateJson, err := json.Marshal(state)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		fmt.Printf("%s\n", stateJson)
+
+
 	case "enforce":
 		if err := flSetEnforce.Parse(os.Args[2:]); err != nil {
 			fmt.Println("enforce")
+		} else {
+			fmt.Println(err)
+			os.Exit(1)
 		}
 	}
 
