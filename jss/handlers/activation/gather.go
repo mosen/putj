@@ -1,4 +1,4 @@
-package jss
+package activation
 
 import (
 	"encoding/xml"
@@ -6,12 +6,6 @@ import (
 	"net/http"
 	"fmt"
 )
-
-type ActivationCode struct {
-	XMLName xml.Name `xml:"activation_code" json:"-"`
-	OrganizationName string `xml:"organization_name" json:"organization_name"`
-	Code string `xml:"code" json:"code"`
-}
 
 func ActivationCaptureHandler(api *jss.Api, state map[string]interface{}) error {
 	req, err := api.NewRequest("GET", "/JSSResource/activationcode", nil)

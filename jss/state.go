@@ -1,11 +1,6 @@
 package jss
 
-// This package unmarshals a complete state from a given json file
-
-//type State struct {
-//	//Accounts []Account `json:"accounts" xml:"accounts"`
-//	//ActivationCode string `json:"activation_code"`
-//	//Buildings []Building `json:"buildings" xml:"buildings"`
-//}
-
-
+// Unmarshal everything as a byte slice so that each handler can decode its own struct
+type State struct {
+	ActivationCode []byte `json:"activation_code,omitempty"`
+}
